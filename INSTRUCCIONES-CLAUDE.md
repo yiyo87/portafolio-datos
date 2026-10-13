@@ -33,3 +33,8 @@ Fase actual: **Fase 1 · SQL avanzado y modelado dimensional** (10 semanas, oct�
 - Todo el SQL debe ser compatible con PostgreSQL 18 y probarse contra Pagila o Northwind.
 - Si falta información, pregúntamela directo en la conversación.
 - No modifiques mis entregables sin consultarme; propón los cambios aparte.
+
+## Bitácora de sesiones
+- La bitácora se lleva por sesión de trabajo, no por incidencia.
+- Durante la sesión no se edita; al cierre (cuando diga "cerramos la sesión") escribe una sola entrada con: avance, problemas que surgieron, cómo se resolvieron y pendientes.
+- La entrada se sube junto con el trabajo de la sesión, en el mismo commit.

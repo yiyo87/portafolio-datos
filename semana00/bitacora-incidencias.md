@@ -2,6 +2,29 @@
 
 Registro de los problemas que aparecen al trabajar en el proyecto: qué pasó, por qué pasó, cómo se diagnosticó y cómo se resolvió. Sirve para aprender el método de diagnóstico, no solo la solución.
 
+## Sesión 2026-10-13 · Semana 0
+
+**Avance**
+- Entorno levantado: PostgreSQL 18.6 en Docker con las bases `pagila`, `northwind` y `practica`.
+- Proyecto ubicado en `D:\portafolio-datos`, con el `.env` y una contraseña propia.
+- DBeaver conectado; los conteos de verificación de Pagila y Northwind coinciden con lo esperado.
+- Repositorio publicado en GitHub (`yiyo87/portafolio-datos`), con la rama `main` enlazada a `origin`.
+- Se acordó llevar la bitácora por sesión y no por incidencia (regla agregada a `INSTRUCCIONES-CLAUDE.md`).
+
+**Problemas y soluciones.** Hubo 8 incidencias, todas resueltas; el detalle de cada una está abajo. Las lecciones principales:
+- Leer los requisitos del dataset antes de cargarlo (versión de PostgreSQL y extensiones).
+- `.env` define la contraseña al primer arranque; `.env.example` es solo la plantilla.
+- En DBeaver, revisar siempre la conexión (`<postgres>`) y la base (`public@pagila`) antes de ejecutar.
+- Diagnosticar preguntándole a la base: `SELECT version();` y `SELECT datname FROM pg_database;`.
+- Alt+X crea una pestaña de resultados por sentencia; revisarlas todas.
+- `git remote -v` antes de reintentar un push; `git push -u origin main` la primera vez.
+
+**Pendientes**
+- Crear la cuenta en dbdiagram.io (se usa en la semana 6).
+- Próxima sesión: semana 1 (19 al 25 de octubre), JOINs, GROUP BY y HAVING sobre Pagila.
+
+### Detalle de incidencias
+
 | # | Fecha | Semana | Incidencia | Estado |
 | --- | --- | --- | --- | --- |
 | 1 | 2026-10-13 | 0 | Pagila exige PostgreSQL 18 y la extensión `vector` | Resuelta |
@@ -11,7 +34,7 @@ Registro de los problemas que aparecen al trabajar en el proyecto: qué pasó, p
 | 5 | 2026-10-13 | 0 | `relation "actor" does not exist` | Resuelta |
 | 6 | 2026-10-13 | 0 | El selector de DBeaver solo mostraba `public` | Resuelta |
 | 7 | 2026-10-13 | 0 | Error en el bloque 2 (Northwind) tras cambiar de base | Resuelta |
-| 8 | 2026-10-13 | 0 | `git push` no sube: el remoto `origin` quedó con `<tu-usuario>` | En curso |
+| 8 | 2026-10-13 | 0 | `git push` no sube: el remoto `origin` quedó con `<tu-usuario>` | Resuelta |
 
 ---
 
@@ -203,10 +226,21 @@ git remote -v
 git push -u origin main
 ```
 
+**Segundo tropiezo.** Después de corregir la URL, `git push` respondió:
+
+```
+fatal: The current branch main has no upstream branch.
+```
+
+El `git push -u origin main` original se había cancelado con Ctrl+C, así que la rama local `main` nunca quedó enlazada con la rama remota. Se resolvió ejecutando `git push -u origin main`. Desde entonces basta con `git push`.
+
+**Verificación.** El commit local y el remoto coinciden (`6a2487f`), y la configuración muestra `branch "main"` enlazada a `origin`.
+
 **Lección.**
 
 | Comando | Para qué sirve |
 | --- | --- |
+| `git push -u origin main` | Primer push de una rama: la sube y la enlaza con el remoto (`-u` = upstream) |
 | `git remote -v` | Ver a qué URL apunta cada remoto. Es lo primero que conviene revisar ante un error de push |
 | `git remote add <nombre> <url>` | Crear un remoto nuevo. Falla si el nombre ya existe |
 | `git remote set-url <nombre> <url>` | Corregir la URL de un remoto existente |
