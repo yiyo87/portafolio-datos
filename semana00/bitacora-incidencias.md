@@ -11,6 +11,7 @@ Registro de los problemas que aparecen al trabajar en el proyecto: qué pasó, p
 | 5 | 2026-10-13 | 0 | `relation "actor" does not exist` | Resuelta |
 | 6 | 2026-10-13 | 0 | El selector de DBeaver solo mostraba `public` | Resuelta |
 | 7 | 2026-10-13 | 0 | Error en el bloque 2 (Northwind) tras cambiar de base | Resuelta |
+| 8 | 2026-10-13 | 0 | `git push` no sube: el remoto `origin` quedó con `<tu-usuario>` | En curso |
 
 ---
 
@@ -167,6 +168,51 @@ SELECT datname FROM pg_database ORDER BY datname;
 **Lección adicional.** Con Alt+X, cada sentencia genera su propia pestaña de resultados, y DBeaver muestra la última. Antes de concluir que algo falló, revisa todas las pestañas de resultados.
 
 **Lección.** Cuando una consulta falla y la siguiente funciona, revisa la hora de cada fila del log. A menudo el error corresponde a un intento anterior, hecho con un contexto distinto (otra base u otro esquema).
+
+---
+
+## 8. `git push` no sube: el remoto `origin` quedó con `<tu-usuario>`
+
+**Síntoma.** Al seguir los pasos del README para subir el repositorio aparecieron dos errores:
+
+```
+it : No se puede procesar la transformación del argumento del parámetro 'test'...
+error: remote origin already exists.
+```
+
+**Causa.** Hubo tres cosas encadenadas:
+
+1. En un intento se escribió `it remote add ...` en lugar de `git remote add ...`. En PowerShell, `It` es un comando de Pester, el módulo de pruebas, y por eso apareció ese error extraño.
+2. En un intento anterior, el comando `git remote add origin` se ejecutó copiado literalmente del README, con el texto `<tu-usuario>` sin reemplazar. Git guardó esa URL inválida como `origin`.
+3. Por eso, al reintentar con el usuario correcto, Git respondió `remote origin already exists`: el nombre `origin` ya estaba ocupado por la URL mala.
+
+**Diagnóstico.** Se leyó la configuración del repositorio en `.git/config`:
+
+```
+[remote "origin"]
+    url = https://github.com/<tu-usuario>/portafolio-datos.git
+```
+
+También se confirmó que el commit `Semana 0: entorno PostgreSQL con Pagila y Northwind` ya existía. Por eso `git commit` decía `nothing to commit, working tree clean`, lo que no es un error. Y se confirmó que `.env` no está en el commit, que es lo correcto.
+
+**Solución.** No hay que volver a hacer `git init` ni otro commit. Basta con corregir la URL del remoto y subir:
+
+```
+git remote set-url origin https://github.com/yiyo87/portafolio-datos.git
+git remote -v
+git push -u origin main
+```
+
+**Lección.**
+
+| Comando | Para qué sirve |
+| --- | --- |
+| `git remote -v` | Ver a qué URL apunta cada remoto. Es lo primero que conviene revisar ante un error de push |
+| `git remote add <nombre> <url>` | Crear un remoto nuevo. Falla si el nombre ya existe |
+| `git remote set-url <nombre> <url>` | Corregir la URL de un remoto existente |
+| `git init` sobre un repo existente | Responde `Reinitialized existing Git repository` y no borra nada |
+
+En los README, el texto entre `< >` es un marcador que hay que reemplazar antes de ejecutar el comando.
 
 ---
 
