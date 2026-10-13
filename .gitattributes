@@ -1,0 +1,3 @@
+# Los scripts que corren dentro del contenedor Linux deben tener saltos de línea LF
+*.sh text eol=lf
+*.sql text eol=lf

@@ -1,0 +1,12 @@
+# Credenciales locales
+.env
+
+# CSV descargados (pueden ser pesados o tener datos que no corresponde publicar)
+csv/*
+!csv/.gitkeep
+
+# Sistema y editores
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

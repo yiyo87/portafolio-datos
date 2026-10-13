@@ -1,0 +1,36 @@
+# Entorno de práctica: PostgreSQL 18 con las bases Pagila y Northwind ya cargadas.
+# Uso: docker compose up -d   (la primera vez tarda 1-2 minutos en cargar los datos)
+#
+# Se usa la imagen oficial de pgvector (PostgreSQL 18 + extensión vector) porque
+# la versión actual de Pagila necesita PostgreSQL 18 y la extensión vector.
+
+services:
+  postgres:
+    image: pgvector/pgvector:pg18-trixie
+    container_name: pg-practica
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Copia .env.example a .env y define POSTGRES_PASSWORD}
+      POSTGRES_DB: practica
+      TZ: America/Santiago
+      PGTZ: America/Santiago
+    ports:
+      - "${PG_PORT:-5432}:5432"
+    volumes:
+      # Datos persistentes: sobreviven a "docker compose down".
+      # En PostgreSQL 18 el volumen va en /var/lib/postgresql (no en .../data).
+      - pgdata:/var/lib/postgresql
+      # Scripts que se ejecutan SOLO la primera vez (volumen vacío)
+      - ./docker/init:/docker-entrypoint-initdb.d:ro
+      - ./docker/datos:/datos:ro
+      # Carpeta para dejar CSV y cargarlos con COPY (semana 5)
+      - ./csv:/csv
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d practica"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  pgdata:
